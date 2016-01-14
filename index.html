@@ -6,27 +6,18 @@
   <style>
 
   html {
-  background-color:  #FF9009 !important;
+  background-color:  #a79580 !important;
     }
 body {
   padding-top: 20px;
   font-size: 16px;
   background: transparent;
-}
-
-   /*#chat{
-       height:400px;
-   }*/
-   #contentWrap{
-     display:none;
-   }
-/*   #chatWrap{
-     float:left;
-     border:1px #000 solid;
-   }*/
-   .mainer{
-     display:none;
-   }
+}  
+   
+      #chatWindow{
+          display:none;
+      }
+      
    .whisper{
      color:grey;
      font-style:italic;
@@ -55,28 +46,24 @@ body {
    </div>
  </div>
 
-
+<div id="chatWindow">
 
  <div class="container">
  		<div class="row">
  			<div class="col-md-6 col-sm-offset-1 panel panel-primary">
-          <div class="panel-body" style="min-height: 400;max-height: 400;overflow-y: scroll;">
-           <div id="contentWrap" class="mainer">
-               <div id="chatWrap">
-                   <div id="chat"></div>
-            <!--   <form id="message-box">
-                   <input type="text" id="message"/>
-                   <input type="submit"/>
-               </form>  -->
-          </div>
-         </div>
-       </div>
-      </div>
+            <div class="panel-body">
+               <div id="contentWrap" >
+                  <div id="chatWrap" style="min-height: 400;max-height: 400;overflow-y: scroll;">
+                      <div id="chat"></div>            
+                  </div>
+               </div>
+            </div>
+        </div>
    <br/>
       <div class="col-md-4 col-sm-offset-1 panel panel-default">
         <div class="panel-heading">Chat</div>
          <div class="panel-body">
-            <div align="left" id="users"></div>
+            <div  id="users"></div>
         </div>
       </div>
 
@@ -101,9 +88,11 @@ body {
 
 </div>
 
+    </div>
 
 
-   <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+
+   <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
    <script src="/socket.io/socket.io.js"></script>
    <script src="/js/bootstrap.js"></script>
 
@@ -113,6 +102,9 @@ body {
        var $messageForm=$('#message-box');
        var $messageBox=$('#message');
        var $chat=$('#chat');
+        
+        var chatOuter=$('#chatWrap');
+        var chatInner=$('#chat');
 
        var $users=$('#users');
 
@@ -134,7 +126,7 @@ body {
                 if(data){
                   $('#nickWrap').hide();
                   console.log("Showing Content Wrap");
-                  $('#contentWrap').show();
+                  $('#chatWindow').show();
                 }else{
                   $nickError.html("That nickname is already taken , try something else");
                 }
@@ -143,13 +135,7 @@ body {
            $nickBox.val('');
        });
 
-      /* socket.on('usernames',function(data){
-           var html='';
-           for(i=0;i<data.length;i++){
-             html+=data[i]+'<br/>';
-           }
-           $users.html(html);
-       });*/
+     
 
        socket.on('usernames',function(data){
             var html='<ul>';
@@ -170,17 +156,27 @@ body {
 
        socket.on('new message',function(data){
            $chat.append("<span class='msg'><b>"+data.nick+" :</b>"+data.msg+"</span><br/>");
+           scrollCorrect();
+          
        });
 
        socket.on('whisper',function(data){
            $chat.append("<span class='whisper'><b>"+data.nick+" :</b>"+data.msg+"</span><br/>");
+           
        });
 
        socket.on('private',function(data){
            $chat.append("<span class='whisper'><b>"+data.nick+" :</b>"+data.msg+"</span><br/>");
+          
        });
+        
+      
+        function scrollCorrect(){
+             chatOuter.scrollTop(chatInner.outerHeight());
+        }
 
     });
+       
    </script>
 
 </body>
