@@ -13,6 +13,16 @@ body {
   font-size: 16px;
   background: transparent;
 }  
+      ul li {
+    color: limegreen;
+           list-style-type: disc;
+    margin-left: 2em;
+      }
+      
+      
+ul li span {
+    color: black;
+}
    
       #chatWindow{
           display:none;
@@ -39,7 +49,7 @@ body {
        <div class="form-group">
        <form id="setNick" role="form">
          <input  type="text" autofocus required placeholder="Your nickname" id="nickname"/>
-         <input class="btn btn-primary" type="submit" value="Submit"/>
+         <input class="btn btn-danger" type="submit" value="Submit"/>
        </form>
      </div>
     </div>
@@ -61,7 +71,7 @@ body {
         </div>
    <br/>
       <div class="col-md-4 col-sm-offset-1 panel panel-default">
-        <div class="panel-heading">Chat</div>
+        <div class="panel-heading">Currently Online</div>
          <div class="panel-body">
             <div  id="users"></div>
         </div>
@@ -121,11 +131,14 @@ body {
 
        $nickForm.submit(function(e){
            e.preventDefault();
+           var title=$nickBox.val();
            socket.emit('new user',$nickBox.val(),function(data){
 
                 if(data){
                   $('#nickWrap').hide();
                   console.log("Showing Content Wrap");
+                    console.log("Trying to set Title :"+title);
+                    document.title=title;    
                   $('#chatWindow').show();
                 }else{
                   $nickError.html("That nickname is already taken , try something else");
@@ -140,7 +153,7 @@ body {
        socket.on('usernames',function(data){
             var html='<ul>';
             for(i=0;i<data.length;i++){
-              html+='<li>'+data[i]+'</li>';
+              html+='<li><span>'+data[i]+'</span></li>';
             }
             html=html+'</ul>';
             $users.html(html);
@@ -149,24 +162,24 @@ body {
        $messageForm.submit(function(e){
             e.preventDefault();
             socket.emit('send message',$messageBox.val(),function(data){
-              $chat.append("<span class='error'>"+data+"</span><br/>");
+              $chat.append("<p class='error'>"+data+"</p><br/>");
             });
             $messageBox.val('');
        });
 
        socket.on('new message',function(data){
-           $chat.append("<span class='msg'><b>"+data.nick+" :</b>"+data.msg+"</span><br/>");
+           $chat.append("<p style='background-color:#E0E8F0' class='msg'><b>"+data.nick+" :</b>"+data.msg+"</p><br/>");
            scrollCorrect();
           
        });
 
        socket.on('whisper',function(data){
-           $chat.append("<span class='whisper'><b>"+data.nick+" :</b>"+data.msg+"</span><br/>");
+           $chat.append("<p class='whisper'><b>"+data.nick+" :</b>"+data.msg+"</p><br/>");
            
        });
 
        socket.on('private',function(data){
-           $chat.append("<span class='whisper'><b>"+data.nick+" :</b>"+data.msg+"</span><br/>");
+           $chat.append("<p class='whisper'><b>"+data.nick+" :</b>"+data.msg+"</p><br/>");
           
        });
         
